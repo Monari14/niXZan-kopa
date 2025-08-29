@@ -5,7 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class PedidoCancelado extends Notification
+class PedidoEsperandoRetirada extends Notification
 {
     use Queueable;
 
@@ -26,7 +26,7 @@ class PedidoCancelado extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'message' => "Pedido #{$this->id_pedido} cancelado!.",
+            'message' => "Pedido #{$this->id_pedido} esperando retirada!.",
         ];
     }
 }

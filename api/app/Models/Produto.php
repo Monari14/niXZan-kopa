@@ -12,8 +12,10 @@ class Produto extends Model
         'tipo',
         'preco_base',
         'estoque',
-        'img_url',
+        'imagem',
     ];
+
+    protected $appends = ['img_url'];
 
     // Caso tenha uma tabela separada de preços:
     public function precos()
@@ -30,5 +32,13 @@ class Produto extends Model
             return true;
         }
         return false;
+    }
+
+    public function getImgUrlAttribute()
+    {
+        if ($this->imagem && file_exists(storage_path('app/public/' . $this->imagem))) {
+            return asset('s/' . $this->imagem);
+        }
+        return asset('i/produto-padrao.png');
     }
 }

@@ -10,6 +10,7 @@ class Pedido extends Model
 
     protected $fillable = [
         'id_user',
+        'id_entregador',
         'copao',
         'endereco',
         'forma_pagamento',

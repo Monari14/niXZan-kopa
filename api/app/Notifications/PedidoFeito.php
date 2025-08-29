@@ -26,7 +26,7 @@ class PedidoFeito extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'message' => "Pedido #{$this->id_pedido} FEITO!.",
+            'message' => "Pedido #{$this->id_pedido} feito!.",
         ];
     }
 }

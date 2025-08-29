@@ -12,6 +12,7 @@ use App\Notifications\PedidoFeito;
 use App\Models\AdminSettings;
 use App\Models\Carrinho;
 use App\Notifications\PedidoCancelado;
+use App\Notifications\PedidoEsperandoRetirada;
 
 class PedidoController extends Controller
 {
@@ -90,7 +91,7 @@ class PedidoController extends Controller
                             'quantidade'     => $qtd,
                             'preco_unitario' => $preco->valor ?? 0,
                             'nome'           => $produto->nome,
-                            'img_url'         => $produto->img_url,
+                            'imagem'         => $produto->img_url,
                         ];
                     }
                 }
@@ -109,7 +110,7 @@ class PedidoController extends Controller
                     'quantidade'     => $copao,
                     'preco_unitario' => $preco->valor ?? 0,
                     'nome'           => $copaoProduto->nome,
-                    'img_url'        => $copaoProduto->img_url,
+                    'imagem'        => $copaoProduto->img_url,
                 ];
 
                 $valorAdicional = AdminSettings::first()->valor_adicional_pedido ?? 0;
@@ -297,7 +298,7 @@ class PedidoController extends Controller
                 'quantidade'     => $item->quantidade,
                 'preco_unitario' => $item->preco_unitario,
                 'nome'           => $item->produto->nome,
-                'img_url'       => $item->produto->img_url,
+                'imagem'       => $item->produto->img_url,
             ];
         }
 
@@ -310,6 +311,29 @@ class PedidoController extends Controller
 
         return response()->json([
             'message' => 'Carrinho atualizado com os itens do pedido selecionado. Prossiga para a confirmação do pedido!',
+        ], 200);
+    }
+    public function tempoExpiradoParaCancelar($id)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Acesso não autorizado!'], 401);
+        }
+
+        $pedido = Pedido::find($id);
+        if(!$pedido)
+        {
+            return response()->json(['error' => 'Pedido não encontrado.'], 404);
+        }
+
+        if ($pedido->status === 'preparando') {
+            $pedido->status = 'esperando_retirada';
+            $pedido->save();
+            $pedido->user->notify(new PedidoEsperandoRetirada($user->name, $pedido->id));
+        }
+
+        return response()->json([
+            'message' => 'Status do pedido atualizado para esperando retirada.'
         ], 200);
     }
 }

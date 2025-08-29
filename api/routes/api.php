@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\EntregadorController;
 
 Route::prefix('/v1')->group(function () {
 
@@ -15,10 +17,10 @@ Route::prefix('/v1')->group(function () {
 
         Route::prefix('/auth')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']); //
+            Route::get('/user/logado', [AuthController::class, 'userLogado']); //
         });
 
         Route::prefix('/cliente')->group(function () {
-            Route::get('/logado', [AuthController::class, 'userLogado']); //
             Route::put('/', [AuthController::class, 'update']); //
             Route::delete('/', [AuthController::class, 'destroy']); //
 
@@ -29,6 +31,25 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/carrinho', [PedidoController::class, 'carrinho']); //
                 Route::post('/cancelar', [PedidoController::class, 'cancelar']); //
                 Route::post('/refazer', [PedidoController::class, 'refazer']); //
+                Route::post('/{id}', [PedidoController::class, 'tempoExpiradoParaCancelar']); //
+            });
+        });
+
+        Route::prefix('/admin')->group(function () {
+            Route::prefix('/produtos')->group(function () {
+                Route::get('/', [ProdutoController::class, 'index']); //
+                Route::post('/', [ProdutoController::class, 'store']); //
+                Route::get('/{id}', [ProdutoController::class, 'show']); //
+                Route::put('/{id}', [ProdutoController::class, 'update']); //
+                Route::delete('/{id}', [ProdutoController::class, 'destroy']); //
+            });
+        });
+
+        Route::prefix('/entregador')->group(function () {
+            Route::prefix('/pedidos')->group(function () {
+                Route::get('/', [EntregadorController::class, 'pedidosEsperandoRetirada']); //
+                Route::post('/aceitar', [EntregadorController::class, 'aceitarEntrega']); //
+                Route::post('/finalizar', [EntregadorController::class, 'finalizarEntrega']); //
             });
         });
     });
