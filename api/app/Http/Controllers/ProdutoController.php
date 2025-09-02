@@ -10,17 +10,20 @@ class ProdutoController extends Controller
 {
     public function index()
     {
-        $produto = Produto::all();
+        $produtos = Produto::all();
+
         return response()->json([
             'produtos' => [
-                'data' => [
-                    'nome' => $produto->nome,
-                    'tipo' => $produto->tipo,
-                    'preco_base' => $produto->preco_base,
-                    'estoque' => $produto->estoque,
-                    'imagem'   => url($produto->img_url),
-                ],
-                'total' => $produto->count(),
+                'data' => $produtos->map(function ($produto) {
+                    return [
+                        'nome'       => $produto->nome,
+                        'tipo'       => $produto->tipo,
+                        'preco_base' => $produto->preco_base,
+                        'estoque'    => $produto->estoque,
+                        'imagem'     => url($produto->img_url),
+                    ];
+                }),
+                'total' => $produtos->count(),
             ],
         ]);
     }

@@ -16,7 +16,7 @@ use App\Notifications\PedidoEsperandoRetirada;
 
 class PedidoController extends Controller
 {
-    public function carrinho(Request $request)
+    public function getarCarrinho(Request $request)
     {
         $user = Auth::user();
         if(!$user) {
@@ -39,6 +39,41 @@ class PedidoController extends Controller
                     'copao' => $copao,
                     'total' => $total,
                 ]
+            ], 200);
+        }
+
+        return response()->json(['error' => 'Acesso não autorizado!'], 401);
+    }
+    public function salvarCarrinho(Request $request)
+    {
+        $user = Auth::user();
+        if(!$user) {
+            return response()->json(['error' => 'Acesso não autorizado!'], 401);
+        }
+
+        if($user->role === 'cliente' || $user->role === 'admin'){
+            $request->validate([
+                'itens_pedido' => 'required|array|min:1',
+                'itens_pedido.*.id_produto' => 'required|integer|exists:produtos,id',
+                'itens_pedido.*.quantidade' => 'required|integer|min:1',
+                'itens_pedido.*.preco_unitario' => 'required|numeric|min:0',
+            ]);
+
+            $itens_pedido = $request->input('itens_pedido');
+            $copao = collect($itens_pedido)->where('nome', 'like', '%copão%')->sum('quantidade');
+            $total = collect($itens_pedido)->sum(fn($item) => $item['quantidade'] * $item['preco_unitario']);
+
+            Carrinho::updateOrCreate(
+                ['id_user' => $user->id],
+                [
+                    'itens_pedido' => json_encode($itens_pedido),
+                    'copao' => $copao,
+                    'total' => $total,
+                ]
+            );
+
+            return response()->json([
+                'message' => 'Carrinho salvo com sucesso!',
             ], 200);
         }
 

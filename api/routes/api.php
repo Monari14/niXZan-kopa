@@ -9,14 +9,14 @@ use App\Http\Controllers\EntregadorController;
 Route::prefix('/v1')->group(function () {
 
     Route::prefix('/auth')->group(function () {
-        Route::post('/register', [AuthController::class, 'register']); //
-        Route::post('/login', [AuthController::class, 'login']); //
+        Route::post('/register', [AuthController::class, 'register']); // --
+        Route::post('/login', [AuthController::class, 'login']); // --
     });
 
     Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('/auth')->group(function () {
-            Route::post('/logout', [AuthController::class, 'logout']); //
+            Route::post('/logout', [AuthController::class, 'logout']); // --
             Route::get('/user/logado', [AuthController::class, 'userLogado']); //
         });
 
@@ -28,7 +28,8 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/meus', [PedidoController::class, 'meusPedidos']); //
                 Route::post('/novo', [PedidoController::class, 'novoPedido']); //
                 Route::post('/confirmar', [PedidoController::class, 'confirmar']); //
-                Route::get('/carrinho', [PedidoController::class, 'carrinho']); //
+                Route::get('/carrinho', [PedidoController::class, 'getarCarrinho']); //
+                Route::post('/carrinho', [PedidoController::class, 'salvarCarrinho']); //
                 Route::post('/cancelar', [PedidoController::class, 'cancelar']); //
                 Route::post('/refazer', [PedidoController::class, 'refazer']); //
                 Route::post('/{id}', [PedidoController::class, 'tempoExpiradoParaCancelar']); //
