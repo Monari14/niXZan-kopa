@@ -201,7 +201,7 @@ class PedidoController extends Controller
                 if($valorPago < $total) {
                     return response()->json(['error' => 'O valor para troco deve ser maior ou igual ao total do pedido.'], 400);
                 }
-                $troco = $valorPago - $total;
+                $troco = $valorPago - $totalItens;
             }
 
             $status = AdminSettings::first()->status_aberto;
@@ -239,6 +239,8 @@ class PedidoController extends Controller
                     'message' => 'Pedido feito com sucesso!',
                 ], 201);
             }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao processar o pedido. Tente novamente mais tarde.'], 500);
         }
     }
     public function meusPedidos(Request $request)

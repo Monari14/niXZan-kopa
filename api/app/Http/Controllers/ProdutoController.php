@@ -10,12 +10,14 @@ class ProdutoController extends Controller
 {
     public function index()
     {
-        $produtos = Produto::all();
+        // puxar todos os produtos, menos do tipo 'copao'
+        $produtos = Produto::where('tipo', '!=', 'copao')->get();
 
         return response()->json([
             'produtos' => [
                 'data' => $produtos->map(function ($produto) {
                     return [
+                        'id'         => $produto->id,
                         'nome'       => $produto->nome,
                         'tipo'       => $produto->tipo,
                         'preco_base' => $produto->preco_base,

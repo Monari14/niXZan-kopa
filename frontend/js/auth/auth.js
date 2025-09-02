@@ -42,23 +42,41 @@ async function register() {
     const password_confirmation = document.getElementById('password_confirmation').value;
 
     const res = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify
-        (
-            {
-                name,
-                username, 
-                email, 
-                telefone, 
-                password, 
-                password_confirmation
-            }
-        )
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, username, email, telefone, password, password_confirmation })
     });
     const data = await res.json();
-    if(data.token) {
-    setToken(data.token);
-    window.location.href = 'news.html';
-    } else alert(JSON.stringify(data));
+
+    if (res.ok) {
+        // se registro for sucesso, loga o usuário
+        await loginAfterRegister(username, password);
+    } else {
+        alert(JSON.stringify(data));
+    }
+}
+
+async function loginAfterRegister(loginValue, password) {
+    const res = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ login: loginValue, password })
+    });
+
+    const data = await res.json();
+    if (data.token) {
+        const role = data.user.role;
+        setToken(data.token);
+        localStorage.setItem('role', role);
+
+        if (role == 'admin') {
+            window.location.href = 'views/admin/index.php';
+        } else if (role == 'cliente') {
+            window.location.href = 'views/cliente/index.php';
+        } else if (role == 'entregador') {
+            window.location.href = 'views/entregador/index.php';
+        }
+    } else {
+        alert(JSON.stringify(data));
+    }
 }
