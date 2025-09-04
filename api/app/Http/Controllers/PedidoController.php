@@ -216,14 +216,14 @@ class PedidoController extends Controller
         if($user->role !== 'cliente' && $user->role !== 'admin'){
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
-
+        $perPage = intval($request->input('per_page', 10));
         $pedidos = Pedido::where('id_user', $user->id)
             ->latest()
-            ->get();
+            ->paginate($perPage);
 
         $pedidosFormatados = $pedidos->map(function($pedido) {
             $itens = json_decode($pedido->itens_pedido, true);
-
+            $created_at = $pedido->created_at->format('d/m/Y H:i');
             $itensSelecionados = array_map(function($item) {
                 return [
                     'nome' => $item['nome'],
@@ -240,12 +240,19 @@ class PedidoController extends Controller
                 'total' => $pedido->total,
                 'status' => $pedido->status,
                 'itens_pedido' => $itensSelecionados,
+                'created_at' => $created_at,
             ];
         });
 
         return response()->json([
             'id_user' => $user->id,
             'info_pedidos' => $pedidosFormatados,
+            'pagination' => [
+                'current_page' => $pedidos->currentPage(),
+                'last_page' => $pedidos->lastPage(),
+                'per_page' => $pedidos->perPage(),
+                'total' => $pedidos->total(),
+            ],
         ], 200);
     }
     public function cancelar(Request $request, $id_pedido)

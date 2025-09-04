@@ -45,7 +45,7 @@ Route::prefix('/v1')->group(function () {
                 Route::delete('/{id}', [ProdutoController::class, 'destroy']); //
             });
             Route::prefix('/pedidos')->group(function () {
-                Route::get('/', [PedidoController::class, 'todosPedidos']); //
+                Route::get('/', [PedidoController::class, 'todosPedidos']); // --
             });
         });
 
