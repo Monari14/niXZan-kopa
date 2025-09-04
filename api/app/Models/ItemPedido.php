@@ -17,11 +17,11 @@ class ItemPedido extends Model
 
     public function pedido()
     {
-        return $this->belongsTo(Pedido::class, 'pedido_id');
+        return $this->belongsTo(Pedido::class, 'id_pedido');
     }
 
     public function produto()
     {
-        return $this->belongsTo(Produto::class, 'produto_id');
+        return $this->belongsTo(Produto::class, 'id_produto');
     }
 }

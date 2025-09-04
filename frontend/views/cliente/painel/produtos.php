@@ -1,4 +1,2 @@
-<h1>Produtos</h1>
+<h2>Produtos</h2>
 <ul id="produtos"></ul>
-<p>Total de produtos: <span id="total">0</span></p>
-

@@ -19,227 +19,190 @@ class PedidoController extends Controller
     public function getarCarrinho(Request $request)
     {
         $user = Auth::user();
-        if(!$user) {
+        if (!$user) {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role === 'cliente' || $user->role === 'admin'){
-            $carrinho = Carrinho::where('id_user', $user->id)->latest()->first();
-            if(!$carrinho) {
-                return response()->json(['message' => 'Carrinho vazio.'], 200);
-            }
-
-            $itens = json_decode($carrinho->itens_pedido, true);
-            $copao = $carrinho->copao;
-            $total = $carrinho->total;
-
-            return response()->json([
-                'carrinho' => [
-                    'itens' => $itens,
-                    'copao' => $copao,
-                    'total' => $total,
-                ]
-            ], 200);
-        }
-
-        return response()->json(['error' => 'Acesso não autorizado!'], 401);
-    }
-    public function salvarCarrinho(Request $request)
-    {
-        $user = Auth::user();
-        if(!$user) {
+        if (!in_array($user->role, ['cliente', 'admin'])) {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role === 'cliente' || $user->role === 'admin'){
-            $request->validate([
-                'itens_pedido' => 'required|array|min:1',
-                'itens_pedido.*.id_produto' => 'required|integer|exists:produtos,id',
-                'itens_pedido.*.quantidade' => 'required|integer|min:1',
-                'itens_pedido.*.preco_unitario' => 'required|numeric|min:0',
-            ]);
+        $carrinho = Carrinho::where('id_user', $user->id)->latest()->first();
 
-            $itens_pedido = $request->input('itens_pedido');
-            $copao = collect($itens_pedido)->where('nome', 'like', '%copão%')->sum('quantidade');
-            $total = collect($itens_pedido)->sum(fn($item) => $item['quantidade'] * $item['preco_unitario']);
-
-            Carrinho::updateOrCreate(
-                ['id_user' => $user->id],
-                [
-                    'itens_pedido' => json_encode($itens_pedido),
-                    'copao' => $copao,
-                    'total' => $total,
-                ]
-            );
-
-            return response()->json([
-                'message' => 'Carrinho salvo com sucesso!',
-            ], 200);
+        if (!$carrinho) {
+            return response()->json(['message' => 'Carrinho vazio.'], 200);
         }
 
-        return response()->json(['error' => 'Acesso não autorizado!'], 401);
+        return response()->json([
+            'carrinho' => [
+                'id'    => $carrinho->id,
+                'itens' => $carrinho->itens_pedido,
+                'total' => $carrinho->total,
+            ]
+        ], 200);
     }
     public function novoPedido(Request $request)
     {
         $user = Auth::user();
-        if(!$user) {
+        if (!$user) {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role === 'cliente' || $user->role === 'admin'){
-            $energeticos = $request->input('energeticos', []);
-            $bebidas     = $request->input('bebidas', []);
-            $gelos       = $request->input('gelos', []);
+        // Recebe o array de itens do JS
+        $itensCarrinho = $request->input('itens', []);
 
-            $qtd_energeticos = array_sum($energeticos);
-            $qtd_bebidas     = array_sum($bebidas);
-            $qtd_gelos       = array_sum($gelos);
+        if (empty($itensCarrinho)) {
+            return response()->json(['error' => 'Carrinho vazio.'], 400);
+        }
 
-            $quantidades = [$qtd_energeticos, $qtd_bebidas, $qtd_gelos];
+        // Buscar todos os produtos de uma vez
+        $produtoIds = array_column($itensCarrinho, 'id');
+        $produtos = Produto::whereIn('id', $produtoIds)->get()->keyBy('id');
 
-            if(min($quantidades) < 1) {
-                return response()->json(['error' => 'É necessário pelo menos 1 item de cada tipo.'], 400);
+        $itensPedido = [];
+        $total = 0;
+
+        $quantidades_por_tipo = [
+            'energetico' => 0,
+            'bebida'     => 0,
+            'gelo'       => 0,
+        ];
+
+        foreach ($itensCarrinho as $item) {
+            $produto = $produtos[$item['id']] ?? null;
+            if (!$produto) continue;
+
+            $preco = Preco::where('id_produto', $produto->id)->latest()->first();
+            if (!$preco || $preco->valor <= 0) {
+                return response()->json(['error' => "Produto '{$produto->nome}' sem preço válido."], 400);
             }
-            if(count(array_unique($quantidades)) !== 1) {
-                return response()->json(['error' => 'Todos os itens (energético, bebida e gelo) devem ter a mesma quantidade.'], 400);
-            }
 
-            $copao = $qtd_energeticos;
+            $quantidade = $item['quantidade'];
+            $valor = $preco->valor * $quantidade;
+            $total += $valor;
 
-            $total = 0;
-            $itens_pedido = [];
+            $itensPedido[] = [
+                'id_produto'     => $produto->id,
+                'nome'           => $produto->nome,
+                'imagem'         => $produto->img_url,
+                'tipo'           => $produto->tipo,
+                'quantidade'     => $quantidade,
+                'preco_unitario' => $preco->valor,
+            ];
 
-            foreach ([$energeticos, $bebidas, $gelos] as $grupo) {
-                foreach($grupo as $id_produto => $qtd) {
-                    if($qtd > 0) {
-                        $produto = Produto::find($id_produto);
-                        $preco = Preco::where('produto_id', $id_produto)->latest()->first();
-
-                        if(!$preco || $preco->valor === null || $preco->valor <= 0) {
-                            return response()->json(['error' => "O produto '{$produto->nome}' está sem preço válido cadastrado."], 400);
-                        }
-                        $valor = $qtd * $preco->valor;
-                        $total += $valor;
-
-                        $itens_pedido[] = [
-                            'id_produto'     => $id_produto,
-                            'quantidade'     => $qtd,
-                            'preco_unitario' => $preco->valor ?? 0,
-                            'nome'           => $produto->nome,
-                            'imagem'         => $produto->img_url,
-                        ];
-                    }
-                }
-            }
-            $copaoProduto = Produto::where('tipo', 'copao')->first();
-            if($copaoProduto && $copao > 0) {
-                $preco = Preco::where('id_produto', $copaoProduto->id)->latest()->first();
-                if(!$preco || $preco->valor === null || $preco->valor <= 0) {
-                    return response()->json(['error' => "O produto '{$copaoProduto->nome}' está sem preço válido cadastrado."], 400);
-                }
-                $valor = $copao * $preco->valor;
-                $total += $valor;
-
-                $itens_pedido[] = [
-                    'id_produto'     => $copaoProduto->id,
-                    'quantidade'     => $copao,
-                    'preco_unitario' => $preco->valor ?? 0,
-                    'nome'           => $copaoProduto->nome,
-                    'imagem'        => $copaoProduto->img_url,
-                ];
-
-                $valorAdicional = AdminSettings::first()->valor_adicional_pedido ?? 0;
-                $total += $valorAdicional * $copao;
-
-                Carrinho::create([
-                    'id_user'      => $user->id,
-                    'itens_pedido' => json_encode($itens_pedido),
-                    'copao'        => $copao,
-                    'total'        => $total,
-                ]);
-
-                return response()->json([
-                    'message' => 'Carrinho salvo com sucesso, prosseguir para a confirmação do pedido!',
-                ]);
+            // Atualiza contagem por tipo
+            if (isset($quantidades_por_tipo[$produto->tipo])) {
+                $quantidades_por_tipo[$produto->tipo] += $quantidade;
             }
         }
+
+        if (empty($itensPedido)) {
+            return response()->json(['error' => 'Nenhum produto válido no carrinho.'], 400);
+        }
+
+        $numero_copoes = min($quantidades_por_tipo);
+
+        $valor_adicional = $numero_copoes * (AdminSettings::first()->valor_adicional_pedido ?? 0);
+        $total_final = $total + $valor_adicional;
+
+        Carrinho::create([
+            'id_user'      => $user->id,
+            'itens_pedido' => $itensPedido,
+            'total'        => $total_final,
+        ]);
+
+        return response()->json([
+            'message' => 'pedido_finalizado',
+            'total'   => $total_final,
+            'itens'   => $itensPedido,
+            'numero_copoes' => $numero_copoes
+        ]);
     }
     public function confirmar(Request $request)
     {
         $user = Auth::user();
-        if(!$user) {
+        if (!$user) {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role !== 'cliente' && $user->role !== 'admin'){
+        if ($user->role !== 'cliente' && $user->role !== 'admin') {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
         $request->validate([
             'endereco'        => 'required|string|max:255',
             'forma_pagamento' => 'required|in:pix,dinheiro',
-            'valor_troco'     => 'required_if:forma_pagamento,dinheiro|nullable|numeric|min:0',
+            'valor_troco'     => 'required_if:forma_pagamento,dinheiro|numeric|min:0',
         ]);
 
         $carrinho = Carrinho::where('id_user', $user->id)->latest()->first();
 
-        $itens = $carrinho->itens_pedido;
-        $copao = $carrinho->copao;
-        $total = $carrinho->total;
+        if (!$carrinho) {
+            return response()->json(['error' => 'Carrinho não encontrado.'], 400);
+        }
 
-        if(!$itens || count($itens) === 0) {
+        $itens = $carrinho->itens_pedido;
+        $totalItens = $carrinho->total;
+
+        if (!$itens || count($itens) === 0) {
             return response()->json(['error' => 'Carrinho vazio.'], 400);
         }
 
-        try{
-            $totalItens = collect($itens)->sum(fn($item) => $item['quantidade'] * $item['preco_unitario']);
+        try {
             $troco = null;
 
-            if($request->forma_pagamento === 'dinheiro')
-            {
-                $valorPago = $request->input('valor_troco', 0);
-                if($valorPago < $total) {
+            if ($request->forma_pagamento === 'dinheiro') {
+                $valorPago = floatval($request->input('valor_troco', 0));
+
+                if ($valorPago < $totalItens) {
                     return response()->json(['error' => 'O valor para troco deve ser maior ou igual ao total do pedido.'], 400);
                 }
                 $troco = $valorPago - $totalItens;
             }
 
             $status = AdminSettings::first()->status_aberto;
-            if($status === true) {
+
+            if ($status == true) {
+                // Cria o pedido
                 $pedido = Pedido::create([
                     'id_user' => $user->id,
-                    'copao' => $copao,
-                    'total' => $total,
-                    'status',
+                    'id_entregador' => null,
                     'endereco' => $request->input('endereco'),
                     'forma_pagamento' => $request->input('forma_pagamento'),
                     'troco' => $troco,
+                    'total' => $totalItens,
+                    'itens_pedido' => json_encode($carrinho->itens_pedido),
+                    'status' => 'preparando',
                 ]);
 
+                // Cria os itens do pedido e diminui estoque
                 foreach ($itens as $item) {
-                    ItemPedido::create([
-                        'id_pedido' => $pedido->id,
-                        'id_produto' => $item['produto_id'],
-                        'quantidade' => $item['quantidade'],
-                        'preco_unitario' => $item['preco_unitario'],
-                    ]);
-
-                    $produto = Produto::find($item['produto_id']);
+                    $produto = Produto::find($item['id_produto']);
                     if ($produto) {
                         $sucesso = $produto->diminuirEstoque($item['quantidade']);
-                        if(!$sucesso) {
+                        if (!$sucesso) {
                             return response()->json(['error' => "Estoque insuficiente para o produto '{$produto->nome}'."], 400);
                         }
                     }
                 }
+
+                // Deleta o carrinho
                 $carrinho->delete();
+
+                // Notificação
                 $pedido->user->notify(new PedidoFeito($request->user(), $pedido->id));
+
                 return response()->json([
+                    'message' => 'pedido_realizado',
                     'id_pedido' => $pedido->id,
-                    'message' => 'Pedido feito com sucesso!',
                 ], 201);
+            } else {
+                return response()->json([
+                    'status' => 'A loja está fechada no momento!'
+                ], 400);
             }
         } catch (\Exception $e) {
+            \Log::error($e);
             return response()->json(['error' => 'Erro ao processar o pedido. Tente novamente mais tarde.'], 500);
         }
     }
@@ -255,13 +218,34 @@ class PedidoController extends Controller
         }
 
         $pedidos = Pedido::where('id_user', $user->id)
-                    ->with('itensPedido.produto')
-                    ->latest()
-                    ->get();
+            ->latest()
+            ->get();
+
+        $pedidosFormatados = $pedidos->map(function($pedido) {
+            $itens = json_decode($pedido->itens_pedido, true);
+
+            $itensSelecionados = array_map(function($item) {
+                return [
+                    'nome' => $item['nome'],
+                    'quantidade' => $item['quantidade'],
+                    'tipo' => $item['tipo'],
+                ];
+            }, $itens);
+
+            return [
+                'id_pedido' => $pedido->id,
+                'endereco' => $pedido->endereco,
+                'forma_pagamento' => $pedido->forma_pagamento,
+                'troco' => $pedido->troco,
+                'total' => $pedido->total,
+                'status' => $pedido->status,
+                'itens_pedido' => $itensSelecionados,
+            ];
+        });
 
         return response()->json([
-            'user' => $user->username,
-            'pedidos' => $pedidos
+            'id_user' => $user->id,
+            'info_pedidos' => $pedidosFormatados,
         ], 200);
     }
     public function cancelar(Request $request, $id_pedido)
@@ -363,8 +347,8 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Pedido não encontrado.'], 404);
         }
 
-        if ($pedido->status === 'preparando') {
-            $pedido->status = 'esperando_retirada';
+        if ($pedido->status === 'pendente') {
+            $pedido->status = 'preparando';
             $pedido->save();
             $pedido->user->notify(new PedidoEsperandoRetirada($user->name, $pedido->id));
         }

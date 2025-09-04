@@ -11,21 +11,21 @@ class Pedido extends Model
     protected $fillable = [
         'id_user',
         'id_entregador',
-        'copao',
         'endereco',
         'forma_pagamento',
         'troco',
         'total',
+        'itens_pedido',
         'status',
     ];
 
-    public function usuario()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(User::class, 'id_user');
     }
 
     public function itens()
     {
-        return $this->hasMany(ItemPedido::class, 'pedido_id');
+        return $this->hasMany(ItemPedido::class, 'id_pedido');
     }
 }

@@ -26,7 +26,7 @@ class PedidoEsperandoRetirada extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'message' => "Pedido #{$this->id_pedido} esperando retirada!.",
+            'message' => "Pedido #{$this->id_pedido} está em preparo!.",
         ];
     }
 }

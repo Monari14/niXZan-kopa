@@ -39,6 +39,6 @@ class Produto extends Model
         if ($this->imagem && file_exists(storage_path('app/public/' . $this->imagem))) {
             return asset('s/' . $this->imagem);
         }
-        return asset('i/produto-padrao.png');
+        return asset('s/i/produto-padrao.png');
     }
 }

@@ -9,181 +9,196 @@ function logout() {
     window.location.href = '../../index.php';
 }
 
-function getCopoesSessao() {
-  return JSON.parse(sessionStorage.getItem("copoes")) || [];
+// -------------------- CARRINHO --------------------
+
+function getCarrinhoSessao() {
+  return JSON.parse(sessionStorage.getItem("carrinho")) || [];
 }
 
-function salvarCopoesSessao(lista) {
-  sessionStorage.setItem("copoes", JSON.stringify(lista));
+function salvarCarrinhoSessao(lista) {
+  sessionStorage.setItem("carrinho", JSON.stringify(lista));
   renderCarrinho();
 }
 
-function criarCopao() {
-  let copoes = getCopoesSessao();
-  const novoCopao = {
-    id: Date.now() + Math.floor(Math.random() * 1000),
-    nome: `Copão ${copoes.length + 1}`,
-    produtos: [],
-    fechado: false
-  };
-  copoes.push(novoCopao);
-  salvarCopoesSessao(copoes);
-}
+function adicionarProdutoAoCarrinho(produto) {
+  let carrinho = getCarrinhoSessao();
 
-function adicionarProdutoAoCopao(produto, copaoId) {
-  let copoes = getCopoesSessao();
-  let copao = copoes.find(c => c.id === copaoId);
-  if (!copao) return;
-
-  let existente = copao.produtos.find(p => p.id === produto.id);
+  let existente = carrinho.find(p => p.id === produto.id);
   if (existente) {
     existente.quantidade += 1;
   } else {
-    copao.produtos.push({ ...produto, quantidade: 1 });
+    carrinho.push({ ...produto, quantidade: 1 });
   }
 
-  const tiposNecessarios = ["energetico", "bebida", "gelo"];
-  const tiposPresentes = copao.produtos.map(p => p.tipo);
-  if (tiposNecessarios.every(t => tiposPresentes.includes(t)) && !copao.fechado) {
-    copao.fechado = true;
-    alert(`${copao.nome} foi fechado! 🎉`);
-  }
-
-  salvarCopoesSessao(copoes);
+  salvarCarrinhoSessao(carrinho);
 }
 
-function removerProdutoDoCopao(produtoId, copaoId) {
-  let copoes = getCopoesSessao();
-  let copao = copoes.find(c => c.id === copaoId);
-  if (!copao) return;
-
-  let produto = copao.produtos.find(p => p.id === produtoId);
+function removerProdutoDoCarrinho(produtoId) {
+  let carrinho = getCarrinhoSessao();
+  let produto = carrinho.find(p => p.id === produtoId);
   if (!produto) return;
 
   if (produto.quantidade > 1) {
     produto.quantidade -= 1;
   } else {
-    copao.produtos = copao.produtos.filter(p => p.id !== produtoId);
+    carrinho = carrinho.filter(p => p.id !== produtoId);
   }
 
-  copao.fechado = false;
-  salvarCopoesSessao(copoes);
+  salvarCarrinhoSessao(carrinho);
 }
 
-function removerCopao(copaoId) {
-  let copoes = getCopoesSessao();
-  copoes = copoes.filter(c => c.id !== copaoId);
-  salvarCopoesSessao(copoes);
+function limparCarrinho() {
+  sessionStorage.removeItem("carrinho");
+  renderCarrinho();
 }
 
 function renderCarrinho() {
-  const carrinho = document.getElementById("carrinho");
-  const copoes = getCopoesSessao();
-  carrinho.innerHTML = "";
+  const carrinhoEl = document.getElementById("carrinho");
+  const carrinho = getCarrinhoSessao();
+  carrinhoEl.innerHTML = "";
 
-  if (copoes.length === 0) {
-    carrinho.innerHTML = "<li>Nenhum copão criado</li>";
-    document.getElementById("total").textContent = 0;
+  if (!carrinho || carrinho.length === 0) {
+    carrinhoEl.innerHTML = "<p>Carrinho vazio</p>";
     return;
   }
 
   let totalProdutos = 0;
 
-  copoes.forEach(c => {
-    const item = document.createElement("li");
-    item.innerHTML = `
-      <h3>${c.nome} ${c.fechado ? "✔️ Fechado" : ""}</h3>
-      <ul></ul>
+  carrinho.forEach(p => {
+    totalProdutos += p.quantidade;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${p.nome}</strong>
+      <img src="${p.imagem}" alt="${p.nome}">
+      <p>Quantidade: ${p.quantidade}</p>
       <div class="btns">
-        <button class="remove">Remover Copão</button>
+        <button class="add">+</button>
+        <button class="remove">-</button>
       </div>
     `;
-    item.querySelector(".remove").onclick = () => removerCopao(c.id);
 
-    const listaProdutos = item.querySelector("ul");
-    c.produtos.forEach(p => {
-      totalProdutos += p.quantidade;
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${p.nome}</strong>
-        <p>Tipo: ${p.tipo}</p>
-        <p>Quantidade: ${p.quantidade}</p>
-        <p>Preço Base: R$ ${p.preco_base}</p>
-        <div class="btns">
-          <button class="add">+</button>
-          <button class="remove">-</button>
-        </div>
-      `;
-      li.querySelector(".add").onclick = () => adicionarProdutoAoCopao({ ...p }, c.id);
-      li.querySelector(".remove").onclick = () => removerProdutoDoCopao(p.id, c.id);
-      listaProdutos.appendChild(li);
-    });
+    li.querySelector(".add").onclick = () => adicionarProdutoAoCarrinho({ ...p });
+    li.querySelector(".remove").onclick = () => removerProdutoDoCarrinho(p.id);
 
-    carrinho.appendChild(item);
+    carrinhoEl.appendChild(li);
   });
 
   document.getElementById("total").textContent = totalProdutos;
 }
 
-function meusPedidos() {
-  fetch(`${API_URL}/cliente/pedidos/meus`, {
-    method: 'GET',
-    headers: { 
-      'Content-Type': 'application/json', 
-      'Authorization': `Bearer ${token}` 
-    },
-  })
-  .then(res => {
+// -------------------- PEDIDOS --------------------
+
+async function meusPedidos() {
+  try {
+    const res = await fetch(`${API_URL}/cliente/pedidos/meus`, {
+      method: 'GET',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${token}` 
+      },
+    });
+
     if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-    return res.json();
-  })
-  .then(dados => {
-    const lista = document.getElementById("pedidos");
+    const dados = await res.json();
+    console.log(dados);
+    const lista = document.getElementById("meus_pedido");
     lista.innerHTML = "";
 
-    const pedidos = dados.pedidos?.data || [];
+    const pedidos = dados.info_pedidos || [];
+
+    // Mapeamento correto do status
+    const statusMap = {
+      pendente: "Pendente",
+      preparando: "Preparando",
+      esperando_retirada: "Esperando retirada",
+      cancelado: "Cancelado",
+      finalizado: "Finalizado",
+      entregue: "Entregue"
+    };
+
     if (pedidos.length > 0) {
       pedidos.forEach(pedido => {
-        const item = document.createElement("li");
-        item.innerHTML = `
-          <strong>Pedido #${pedido.id}</strong>
-          <p>Status: ${pedido.status}</p>
-          <p>Total: R$ ${pedido.total}</p>
-        `;
-        lista.appendChild(item);
+        const details = document.createElement("details");
+        details.style.marginBottom = "10px";
+
+        const summary = document.createElement("summary");
+        const status_pedido = statusMap[pedido.status] || pedido.status;
+
+        summary.innerHTML = `Pedido #${pedido.id_pedido} | ${status_pedido}`;
+        details.appendChild(summary);
+
+        const ulItens = document.createElement("ul");
+        if(pedido.troco == null){
+          ulItens.innerHTML = `
+            Endereço: ${pedido.endereco}
+
+            <hr><br>
+            Forma de pagamento: ${pedido.forma_pagamento}
+            Total: R$ ${pedido.total}
+            <br><br><hr>
+          `;
+        }else{
+          ulItens.innerHTML = `
+            Status: ${status_pedido}<br>
+            Endereço: ${pedido.endereco}
+
+            <hr><br>
+            Total: R$ ${pedido.total}<br>
+            Troco: R$ ${pedido.troco}<br>
+            <br><hr><br>
+          `;
+        }
+
+        pedido.itens_pedido.forEach(item => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+          ${item.nome} - ${item.quantidade}x (${item.tipo})`;
+          ulItens.appendChild(li);
+        });
+
+        details.appendChild(ulItens);
+        lista.appendChild(details);
       });
     } else {
-      lista.innerHTML = "<li>Nenhum pedido encontrado</li>";
+      lista.innerHTML = "<p>Faça um pedido</p>";
     }
-  })
-  .catch(erro => console.error("Erro ao carregar pedidos:", erro));
+
+  } catch (erro) {
+    console.error("Erro ao carregar pedidos:", erro);
+  }
 }
 
 function finalizarPedido() {
-  const copoes = getCopoesSessao().filter(c => c.fechado);
-  if (copoes.length === 0) {
-    alert("Nenhum copão fechado para finalizar o pedido.");
+  const carrinho = getCarrinhoSessao();
+
+  if (carrinho.length === 0) {
+    alert("Carrinho vazio.");
     return;
   }
 
-  // Preparar os arrays que a API espera
-  const energeticos = {};
-  const bebidas = {};
-  const gelos = {};
+  // Verifica se há pelo menos 1 energético, 1 bebida e 1 gelo, e se as quantidades são iguais
+  const qtdEnergetico = carrinho
+    .filter(p => p.tipo && p.tipo.toLowerCase() === 'energetico')
+    .reduce((acc, p) => acc + p.quantidade, 0);
 
-  copoes.forEach(copao => {
-    copao.energeticos?.forEach(item => {
-      energeticos[item.id] = (energeticos[item.id] || 0) + item.quantidade;
-    });
-    copao.bebidas?.forEach(item => {
-      bebidas[item.id] = (bebidas[item.id] || 0) + item.quantidade;
-    });
-    copao.gelos?.forEach(item => {
-      gelos[item.id] = (gelos[item.id] || 0) + item.quantidade;
-    });
-  });
+  const qtdBebida = carrinho
+    .filter(p => p.tipo && p.tipo.toLowerCase() === 'bebida')
+    .reduce((acc, p) => acc + p.quantidade, 0);
 
-  const pedidoData = { energeticos, bebidas, gelos };
+  const qtdGelo = carrinho
+    .filter(p => p.tipo && p.tipo.toLowerCase() === 'gelo')
+    .reduce((acc, p) => acc + p.quantidade, 0);
+
+  if (qtdEnergetico === 0 || qtdBebida === 0 || qtdGelo === 0) {
+    alert('O pedido deve conter pelo menos 1 energético, 1 bebida e 1 gelo.');
+    return;
+  }
+
+  if (!(qtdEnergetico === qtdBebida && qtdBebida === qtdGelo)) {
+    alert('A quantidade de energético, bebida e gelo deve ser igual.');
+    return;
+  }
 
   fetch(`${API_URL}/cliente/pedidos/novo`, {
     method: 'POST',
@@ -191,21 +206,28 @@ function finalizarPedido() {
       'Content-Type': 'application/json', 
       'Authorization': `Bearer ${token}` 
     },
-    body: JSON.stringify(pedidoData)
+    body: JSON.stringify({ itens: carrinho }) // chave 'itens' → backend espera
   })
   .then(res => {
     if (!res.ok) return res.json().then(err => { throw new Error(err.error || 'Erro desconhecido'); });
     return res.json();
   })
   .then(data => {
-    alert(data.message || "Pedido realizado com sucesso!");
-    sessionStorage.removeItem("copoes");
-    renderCarrinho();
+    console.log("Resposta do servidor:", data);
+
+    // Ajuste: backend retorna "Carrinho salvo com sucesso!..." no campo message
+    if (data.message && data.message.toLowerCase().includes("pedido_finalizado")) {
+      window.location.href = 'resumo/resumo.php';
+    }
+
+    limparCarrinho();
     meusPedidos();
   })
   .catch(erro => console.error("Erro ao finalizar pedido:", erro));
 }
 
+
+// -------------------- PRODUTOS --------------------
 
 async function carregarProdutos() {
   try {
@@ -231,17 +253,11 @@ async function carregarProdutos() {
           <strong>${p.nome}</strong>
           <img src="${p.imagem}" alt="${p.nome}">
           <div class="btns">
-            <button class="add">Adicionar ao Copão</button>
+            <button class="add">+</button>
           </div>
         `;
 
-        item.querySelector(".add").onclick = () => {
-          let copoes = getCopoesSessao();
-          if (copoes.length === 0) criarCopao();
-          const ultimoCopao = getCopoesSessao().slice(-1)[0];
-          adicionarProdutoAoCopao({ ...p }, ultimoCopao.id);
-        };
-
+        item.querySelector(".add").onclick = () => adicionarProdutoAoCarrinho({ ...p });
         lista.appendChild(item);
       });
     } else {
@@ -252,6 +268,8 @@ async function carregarProdutos() {
     console.error("Erro ao carregar produtos:", erro);
   }
 }
+
+// -------------------- INIT --------------------
 
 window.onload = () => {
   carregarProdutos();
