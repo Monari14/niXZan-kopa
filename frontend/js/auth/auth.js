@@ -2,8 +2,8 @@ const API_URL = 'http://localhost:8000/api/v1';
 function setToken(token) { localStorage.setItem('token', token); }
 
 async function login() {
-    const loginValue = document.getElementById('login').value;
-    const password = document.getElementById('password').value;
+    const loginValue = document.getElementById('email_username').value;
+    const password = document.getElementById('login_password').value;
 
     const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',

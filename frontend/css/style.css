@@ -38,7 +38,6 @@ body {
 header {
   background: var(--bg-header);
   padding: 1.2rem 2.5rem;
-  display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow);
@@ -47,23 +46,6 @@ header {
   z-index: 20;
   border-bottom: 1px solid #222;
   transition: background var(--transition);
-}
-
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--accent);
-  text-decoration: none;
-  letter-spacing: 0.03em;
-  transition: color var(--transition);
-}
-
-.navbar-brand img {
-  height: 45px;
-  filter: drop-shadow(0 2px 6px #0008);
 }
 
 header button {
@@ -279,7 +261,7 @@ h1 {
 }
 
 /* FORMULÁRIO DO \"resumo_pedido.php\" */
-#finalizar_pedido {
+#finalizar_pedido, #register, #login {
   background: var(--bg-card);
   padding: 2.2rem 1.7rem;
   border-radius: var(--radius);
@@ -292,7 +274,7 @@ h1 {
   border: 1px solid #222;
 }
 
-#finalizar_pedido label {
+#finalizar_pedido label, #register label, #login label {
   font-weight: 600;
   color: var(--accent);
   margin-bottom: 0.4rem;
@@ -300,8 +282,10 @@ h1 {
   letter-spacing: 0.02em;
 }
 
-#finalizar_pedido input[type="text"],
-#finalizar_pedido input[type="number"],
+#finalizar_pedido input[type="text"], #register input[type="text"], #login input[type="text"],
+#finalizar_pedido input[type="number"], #register input[type="number"], #login input[type="number"],
+#finalizar_pedido input[type="email"], #register input[type="email"], #login input[type="email"],
+#finalizar_pedido input[type="password"], #register input[type="password"], #login input[type="password"],
 #finalizar_pedido select {
   width: 100%;
   padding: 0.8rem 1.1rem;
@@ -314,14 +298,16 @@ h1 {
   transition: border var(--transition), background var(--transition);
 }
 
-#finalizar_pedido input:focus,
-#finalizar_pedido select:focus {
+#finalizar_pedido input:focus, #register input:focus, #login input:focus,
+#finalizar_pedido select:focus, #register select:focus, #login select:focus
+{
   border-color: var(--accent);
   outline: none;
   background: var(--bg-hover);
 }
 
-#finalizar_pedido button[type="submit"] {
+#finalizar_pedido button[type="submit"], #register button[type="submit"], #login button[type="submit"]
+{
   background: var(--accent);
   color: var(--bg-main);
   border: none;
@@ -335,7 +321,8 @@ h1 {
   transition: background var(--transition), box-shadow var(--transition);
 }
 
-#finalizar_pedido button[type="submit"]:hover {
+#finalizar_pedido button[type="submit"]:hover, #register button[type="submit"]:hover, #login button[type="submit"]:hover
+{
   background: var(--accent-hover);
   box-shadow: 0 4px 16px #0006;
 }
@@ -343,6 +330,9 @@ h1 {
 #campo_troco {
   margin-top: 0.7rem;
 }
+
+button { background: #bb86fc; color: #121212; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
+button:hover { background: #9b4dfc; }
 
 /* DETAILS DO \"pedidos.php\" */
 details {
@@ -401,8 +391,141 @@ details ul li {
   background: var(--accent);
 }
 
-/* RESPONSIVO */
 
+/* NAVBAR MODERNA */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-header);
+  padding: 0.8rem 2rem;
+  border-radius: var(--radius);
+  gap: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+/* LOGO */
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color var(--transition), transform var(--transition);
+}
+.navbar-logo a:hover {
+  transform: scale(1.05);
+}
+.navbar-logo img {
+  height: 42px;
+  filter: drop-shadow(0 2px 6px #0005);
+}
+
+/* LINKS */
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+.navbar-links li a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.05rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  position: relative;
+  transition: all var(--transition);
+}
+.navbar-links li a::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--accent);
+  transition: width var(--transition);
+}
+.navbar-links li a:hover {
+  color: var(--accent);
+}
+.navbar-links li a:hover::after {
+  width: 100%;
+}
+
+/* AÇÕES */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.logout-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid #333;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: none;
+  transition: background var(--transition), color var(--transition), border var(--transition);
+}
+.logout-btn:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* HAMBURGER MENU */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  gap: 5px;
+}
+.menu-toggle span {
+  width: 24px;
+  height: 3px;
+  background: var(--text-main);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.8rem 1rem;
+  }
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    background: var(--bg-header);
+    position: absolute;
+    top: 100%;
+    right: 1rem;
+    width: 220px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+  }
+  .navbar-links.active {
+    display: flex;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+/* RESPONSIVO */
 @media (max-width: 768px) {
   #produtos {
 	display: grid;

@@ -357,4 +357,54 @@ class PedidoController extends Controller
             'message' => 'Status do pedido atualizado para esperando retirada.'
         ], 200);
     }
+    public function todosPedidos(Request $request)
+    {
+        $user = Auth::user();
+        if(!$user) {
+            return response()->json(['error' => 'Acesso não autorizado!'], 401);
+        }
+
+        if($user->role !== 'admin'){
+            return response()->json(['error' => 'Acesso não autorizado!'], 401);
+        }
+
+        $perPage = intval($request->input('per_page', 10));
+        $pedidos = Pedido::latest()->paginate($perPage);
+
+        $pedidosFormatados = $pedidos->getCollection()->map(function($pedido) {
+            $itens = json_decode($pedido->itens_pedido, true);
+            $created_at = $pedido->created_at->format('d/m/Y H:i');
+            $itensSelecionados = array_map(function($item) {
+                return [
+                    'nome' => $item['nome'],
+                    'quantidade' => $item['quantidade'],
+                    'tipo' => $item['tipo'],
+                ];
+            }, $itens);
+
+            return [
+                'id_pedido' => $pedido->id,
+                'id_cliente' => $pedido->id_user,
+                'nome_cliente' => $pedido->user->name,
+                'endereco' => $pedido->endereco,
+                'forma_pagamento' => $pedido->forma_pagamento,
+                'troco' => $pedido->troco,
+                'total' => $pedido->total,
+                'status' => $pedido->status,
+                'itens_pedido' => $itensSelecionados,
+                'created_at' => $created_at,
+            ];
+        });
+
+        return response()->json([
+            'id_user' => $user->id,
+            'info_pedidos' => $pedidosFormatados,
+            'pagination' => [
+                'current_page' => $pedidos->currentPage(),
+                'last_page' => $pedidos->lastPage(),
+                'per_page' => $pedidos->perPage(),
+                'total' => $pedidos->total(),
+            ],
+        ], 200);
+    }
 }

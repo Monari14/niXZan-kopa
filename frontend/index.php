@@ -3,48 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login / Registro</title>
+  <title>Login</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <header>
+      <nav class="navbar">
+        <div class="navbar-logo">
+          <a href="/index.php">
+              <img src="i/logo.png" alt="Logo"> kopa
+          </a>
+        </div>
+      <div class="navbar-actions">
+        <ul class="navbar-links">
+          <li><a href="index.php">Login</a></li>
+          <li><a href="register.php">Registre-se</a></li>
+        </ul>
+      </div>
 
-  <!-- Header -->
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
   <div>
-    <h1>kopa</h1>
-    <button id="theme-toggle">🌙</button>
-  </div>
-  <div>
-    <!-- Cadastro -->
-    <div>
-      <h2>Registrar</h2>
+  <br>
+  <h2 style="text-align:center;">Login</h2>
+  <form id="login">
+      <label for="email_username">E-mail ou username:</label>
+      <input type="text" id="email_username" placeholder="Seu e-mail ou username">
 
-      <input type="text" id="name" placeholder="Nome">
-
-      <input type="text" id="username" placeholder="Username">
-
-      <input type="email" id="email" placeholder="Email">
-
-      <input type="text" id="telefone" placeholder="Telefone">
-
-      <input type="password" id="reg-password" placeholder="Senha">
-
-      <input type="password" id="password_confirmation" placeholder="Confirme a senha">
-
-      <button onclick="register()">Registrar</button>
-    </div>
-
-    <!-- Login -->
-    <div>
-      <h2>Login</h2>
-
-      <input type="text" id="login" placeholder="Email ou Username">
-
-      <input type="password" id="password" placeholder="Senha">
-
-      <button onclick="login()">Login</button>
-    </div>
-  </div>
-
+      <label for="login_password">Senha:</label>
+      <input type="password" id="login_password" placeholder="Sua senha">
+      
+      <button type="submit">Login</button>
+      <ul class="navbar-links">
+        <li><p>Não tem uma conta? <a href="index.php" style="color: #bb86fc;">Registre-se</a></p></li>
+      </ul>
+  </form>
   <script src="js/theme.js"></script>
   <script src="js/auth/auth.js"></script>
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const navbarLinks = document.querySelector(".navbar-links");
+
+    menuToggle.addEventListener("click", () => {
+      navbarLinks.classList.toggle("active");
+    });
+
+    document.getElementById('login').addEventListener('submit', function(e) {
+      e.preventDefault();
+      login();
+    });
+  </script>
 </body>
 </html>

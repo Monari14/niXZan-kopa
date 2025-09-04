@@ -44,6 +44,9 @@ Route::prefix('/v1')->group(function () {
                 Route::put('/{id}', [ProdutoController::class, 'update']); //
                 Route::delete('/{id}', [ProdutoController::class, 'destroy']); //
             });
+            Route::prefix('/pedidos')->group(function () {
+                Route::get('/', [PedidoController::class, 'todosPedidos']); //
+            });
         });
 
         Route::prefix('/entregador')->group(function () {

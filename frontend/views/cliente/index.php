@@ -4,18 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel de Produtos</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    button { background: #bb86fc; color: #121212; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
-    button:hover { background: #9b4dfc; }
-  </style>
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
   <header>
-    <a class="navbar-brand" href="#">
-        <img src="../../i/logo.png" alt="Logo"> kopa
-    </a>
-    <button onclick="logout()">Sair</button>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="#">
+          <img src="../../i/logo.png" alt="Logo"> kopa
+        </a>
+      </div>
+      <div class="navbar-actions">
+        <ul class="navbar-links">
+          <li><a href="/meus_pedidos.php">Meus pedidos</a></li>
+          <button class="logout-btn" onclick="logout()">Sair</button>
+        </ul>
+      </div>
+
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
   </header>
   <main>
     <div class="container">
@@ -31,6 +42,14 @@
     </div>
   </main>
   <?php include 'footer.php';?>
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const navbarLinks = document.querySelector(".navbar-links");
+
+    menuToggle.addEventListener("click", () => {
+      navbarLinks.classList.toggle("active");
+    });
+  </script>
   <script src="js/painel.js"></script>
 </body>
 </html>
