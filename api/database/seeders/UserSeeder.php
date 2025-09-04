@@ -22,5 +22,14 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'password' => Hash::make('admin123'),
         ]);
+
+        User::create([
+            'name' => 'Felipe Eduardo Monari',
+            'email' => 'felipeemonari@gmail.com',
+            'username' => 'monari',
+            'telefone' => '54996472916',
+            'role' => 'cliente',
+            'password' => Hash::make('felipe'),
+        ]);
     }
 }

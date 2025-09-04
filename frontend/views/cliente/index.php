@@ -16,7 +16,7 @@
       </div>
       <div class="navbar-actions">
         <ul class="navbar-links">
-          <li><a href="/meus_pedidos.php">Meus pedidos</a></li>
+          <li><a href="pedidos/index.php">Meus pedidos</a></li>
           <button class="logout-btn" onclick="logout()">Sair</button>
         </ul>
       </div>
