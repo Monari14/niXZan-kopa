@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: "mysql:8.4.6"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+  phpmyadmin:
+    image: "phpmyadmin:5.2.2-apache"
+    ports:
+      - 5555:80
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+  web:
+    build:
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./storage:/var/www/storage
+    ports:
+      - "4444:80"
+    env_file: .env
