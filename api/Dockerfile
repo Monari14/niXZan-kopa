@@ -16,6 +16,8 @@ FROM php:8.4.12-apache AS dist
 COPY --from=vendor /app/vendor /var/www/vendor/
 COPY public /var/www/html/
 
+RUN docker-php-ext-install pdo pdo_mysql
+
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 

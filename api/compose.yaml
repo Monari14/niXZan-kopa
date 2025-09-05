@@ -11,6 +11,7 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
   web:
+    image: monari14/api-kopa:0.0
     build:
       dockerfile: ./Dockerfile
     volumes:
