@@ -17,7 +17,7 @@
           <div class="navbar-actions">
               <ul class="navbar-links">
                   <li><a href="pedidos/index.php">Pedidos</a></li>
-                  <li><a href="/produtos.php">Produtos</a></li>
+                  <li><a href="produtos/index.php">Produtos</a></li>
                   <li><a href="/clientes.php">Clientes</a></li>
                   <li><a href="/entregadores.php">Entregadores</a></li>
                   <button class="logout-btn" onclick="logout()">Sair</button>

@@ -57,7 +57,9 @@ async function carregarPedidos() {
           <td>R$ ${pedido.total}</td>
           <td>${status}</td>
           <td>
-            ${(pedido.itens_pedido || []).map(item => `<li>${item.nome} (${item.quantidade}x)</li>`).join('<br>')}
+            ${(pedido.itens_pedido || []).map(item => 
+              `<li>${item.nome} (${item.quantidade}x)</li>`
+            ).join('<br>')}
           <\/td>
           <td>${pedido.created_at}</td>
         `;
@@ -65,7 +67,7 @@ async function carregarPedidos() {
       });
     } else {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td colspan=\"7\">Nenhum pedido encontrado</td>`;
+      tr.innerHTML = `<td colspan=\"8\">Nenhum pedido encontrado</td>`;
       tabela.appendChild(tr);
     }
   } catch (erro) {
