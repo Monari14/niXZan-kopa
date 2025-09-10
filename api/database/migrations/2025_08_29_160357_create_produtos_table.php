@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('tipo', ['energetico', 'bebida', 'gelo', 'copao']);
             $table->decimal('preco_base', 8, 2)->nullable();
             $table->integer('estoque')->default(0);
-            $table->string('img_url')->nullable();
+            $table->string('imagem')->nullable();
             $table->timestamps();
         });
     }

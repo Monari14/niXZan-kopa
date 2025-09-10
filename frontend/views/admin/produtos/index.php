@@ -6,11 +6,11 @@
   <title>Painel de Produtos</title>
   <link rel="stylesheet" href="../../../css/style.css">
   <style>
-    #produtoModal1, #produtoModal {
+    #produtoModal1, #produtoModal, #adicionarProdutoModal {
       display: none;
     }
 
-    .modal-content1, .modal-content {
+    .modal-content1, .modal-content, .modal-actions-adicionar {
       background: #23232a;
       padding: 20px;
       border-radius: 12px;
@@ -24,9 +24,73 @@
       cursor: pointer;
     }
 
-    .modal-actions1. .modal-actions {
+    .modal-actions1, .modal-actions, .modal-actions-adicionar {
       margin-top: 15px;
       gap: 10px;
+    }
+    
+    /* Estilos para o formulário */
+    #editarForm, #adicionarForm {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Estilos para os rótulos */
+    #editarForm label, #adicionarForm label {
+      text-align: left;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    /* Estilos para os campos de entrada e seleção */
+    #editarForm input, #adicionarForm input,
+    #editarForm select, #adicionarForm select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    #editarForm input:focus, #adicionarForm input:focus,
+    #editarForm select:focus, #adicionarForm select:focus {
+      outline: none;
+      border-color: #007bff; /* Cor de destaque ao focar */
+    }
+
+    /* Estilos para os botões */
+    #editarForm button, #adicionarForm button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Estilo para o botão de salvar */
+    #editarForm button[type="submit"], #adicionarForm button[type="submit"] {
+      background-color: #28a745; /* Verde */
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    #editarForm button[type="submit"]:hover, #adicionarForm button[type="submit"]:hover {
+      background-color: #218838; /* Verde mais escuro */
+    }
+
+    /* Estilo para o botão de cancelar */
+    #cancelarEdicao, #cancelarAdicao {
+      background-color: #dc3545; /* Vermelho */
+      color: #fff;
+    }
+
+    #cancelarEdicao:hover, #cancelarAdicao:hover {
+      background-color: #c82333; /* Vermelho mais escuro */
     }
   </style>
 </head>
@@ -59,41 +123,13 @@
   <main>
     <div class="container">
       <div class="esquerda">
-        <h2>Produto</h2>
-        <center>
-          <div id="produtoModal1" class="modal1">
-            <div class="modal-content1">
-              <span id="closeModal1" class="close1">&times;</span>
-              <h3 id="modalNome1"></h3>
-              <img id="modalImagem1" src="" alt="" style="max-width: 200px; display: block; margin-bottom: 10px;">
-              <p><strong>Tipo:</strong> <span id="modalTipo1"></span></p>
-              <p><strong>Preço:</strong> R$ <span id="modalPreco1"></span></p>
-              <p><strong>Estoque:</strong> <span id="modalEstoque1"></span></p>
-                <div class="modal-actions1">
-                    <button id="editarBtn1">Editar</button>
-                    <button id="deletarBtn1">Deletar</button>
-                </div>
-            </div>
-          </div>
-            <div id="produtoModal" class="modal">
-            <div class="modal-content">
-              <span id="closeModal" class="close">&times;</span>
-              <h3 id="modalNome"></h3>
-              <img id="modalImagem" src="" alt="" style="max-width: 200px; display: block; margin-bottom: 10px;">
-              <p><strong>Tipo:</strong> <span id="modalTipo"></span></p>
-              <p><strong>Preço:</strong> R$ <span id="modalPreco"></span></p>
-              <p><strong>Estoque:</strong> <span id="modalEstoque"></span></p>
-                <div class="modal-actions">
-                    <button id="editarBtn">Editar</button>
-                    <button id="deletarBtn">Deletar</button>
-                </div>
-            </div>
-          </div>
-        </center>
+        <?php include 'modal_produtos.php';?>
       </div>
       <div class="meio">
-        <h2 style="text-align:center;">Todos produtos</h2>
-        <ul id="produtos"></ul>
+        <?php include 'todos_produtos.php';?>
+      </div>
+      <div class="direita">
+        <?php include 'adicionar_produtos.php';?>
       </div>
     </div>
   </main>

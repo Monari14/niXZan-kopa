@@ -38,11 +38,11 @@ Route::prefix('/v1')->group(function () {
 
         Route::prefix('/admin')->group(function () {
             Route::prefix('/produtos')->group(function () {
-                Route::get('/', [ProdutoController::class, 'index']); //
-                Route::post('/', [ProdutoController::class, 'store']); //
+                Route::get('/', [ProdutoController::class, 'index']); // --
+                Route::post('/', [ProdutoController::class, 'store']); // --
                 Route::get('/{id}', [ProdutoController::class, 'show']); //
-                Route::put('/{id}', [ProdutoController::class, 'update']); //
-                Route::delete('/{id}', [ProdutoController::class, 'destroy']); //
+                Route::put('/{id}', [ProdutoController::class, 'update']); // --
+                Route::delete('/{id}', [ProdutoController::class, 'destroy']); // --
             });
             Route::prefix('/pedidos')->group(function () {
                 Route::get('/', [PedidoController::class, 'todosPedidos']); // --

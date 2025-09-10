@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Produto;
-use App\Models\Preco;
 use App\Models\Pedido;
-use App\Models\ItemPedido;
 use App\Notifications\PedidoFeito;
 use App\Models\AdminSettings;
 use App\Models\Carrinho;
@@ -72,13 +70,8 @@ class PedidoController extends Controller
             $produto = $produtos[$item['id']] ?? null;
             if (!$produto) continue;
 
-            $preco = Preco::where('id_produto', $produto->id)->latest()->first();
-            if (!$preco || $preco->valor <= 0) {
-                return response()->json(['error' => "Produto '{$produto->nome}' sem preço válido."], 400);
-            }
-
             $quantidade = $item['quantidade'];
-            $valor = $preco->valor * $quantidade;
+            $valor = $produto->preco_base * $quantidade;
             $total += $valor;
 
             $itensPedido[] = [
@@ -87,7 +80,7 @@ class PedidoController extends Controller
                 'imagem'         => $produto->img_url,
                 'tipo'           => $produto->tipo,
                 'quantidade'     => $quantidade,
-                'preco_unitario' => $preco->valor,
+                'preco_unitario' => $produto->preco_base,
             ];
 
             // Atualiza contagem por tipo

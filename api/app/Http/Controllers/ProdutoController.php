@@ -5,13 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Produto;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
     public function index()
     {
-        // puxar todos os produtos, menos do tipo 'copao'
-        $produtos = Produto::where('tipo', '!=', 'copao')->get();
+        $user = Auth::user();
+
+        if ($user->role == "admin") {
+            $produtos = Produto::orderBy('tipo')->get();
+        } else {
+            $produtos = Produto::where('tipo', '!=', 'copao')
+                                ->orderBy('tipo')
+                                ->get();
+        }
 
         return response()->json([
             'produtos' => [
@@ -29,6 +38,7 @@ class ProdutoController extends Controller
             ],
         ]);
     }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -114,6 +124,12 @@ class ProdutoController extends Controller
         }
 
         if ($request->hasFile('imagem')) {
+            // Deletar a imagem antiga se existir
+            if ($produto->imagem && Storage::disk('public')->exists($produto->imagem)) {
+                Storage::disk('public')->delete($produto->imagem);
+            }
+
+            // Salvar a nova imagem
             $imagemPath = $request->file('imagem')->store('p', 'public');
             $produto->imagem = $imagemPath;
         }
