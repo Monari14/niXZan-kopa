@@ -40,7 +40,7 @@
       
       <button type="submit">Login</button>
       <ul class="navbar-links">
-        <li><p>Não tem uma conta? <a href="index.php" style="color: #bb86fc;">Registre-se</a></p></li>
+        <li><p>Não tem uma conta? <a href="register.php" style="color: #bb86fc;">Registre-se</a></p></li>
       </ul>
   </form>
   <script src="js/theme.js"></script>

@@ -21,17 +21,26 @@ class EntregadorController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
+        // Pega todos os pedidos com status 'esperando_retirada'
         $pedidos = Pedido::where('status', 'esperando_retirada')
-            ->with('itens.produto', 'usuario')
             ->latest()
             ->get();
 
         $pedidosFormatados = $pedidos->map(function ($pedido) {
             return [
-                'id_pedido' => $pedido->id,
-                'cliente'   => $pedido->usuario->name,
-                'endereco'  => $pedido->endereco,
-                'total'     => $pedido->total,
+                'id_pedido'  => $pedido->id,
+                'cliente'    => $pedido->user->name ?? 'Cliente não encontrado',
+                'endereco'   => $pedido->endereco,
+                'total'      => $pedido->total,
+                'status'     => $pedido->status,
+                'itens'      => collect(json_decode($pedido->itens_pedido, true))->map(function($item){
+                    return [
+                        'produto'    => $item['produto'] ?? 'Produto removido',
+                        'quantidade' => $item['quantidade'] ?? 0,
+                        'preco'      => $item['preco'] ?? 0,
+                    ];
+                }),
+                'created_at' => $pedido->created_at->toDateTimeString(),
             ];
         });
 
@@ -126,17 +135,24 @@ class EntregadorController extends Controller
         }
 
         $pedidos = Pedido::where('id_entregador', $user->id)
-            ->with('itens.produto', 'usuario')
             ->latest()
             ->get();
 
         $pedidosFormatados = $pedidos->map(function ($pedido) {
             return [
-                'id_pedido' => $pedido->id,
-                'cliente'   => $pedido->usuario->name,
-                'endereco'  => $pedido->endereco,
-                'total'     => $pedido->total,
-                'status'    => $pedido->status,
+                'id_pedido'  => $pedido->id,
+                'cliente'    => $pedido->user->name ?? 'Cliente não encontrado',
+                'endereco'   => $pedido->endereco,
+                'total'      => $pedido->total,
+                'status'     => $pedido->status,
+                'itens'      => collect(json_decode($pedido->itens_pedido, true))->map(function($item){
+                    return [
+                        'produto'    => $item['produto'] ?? 'Produto removido',
+                        'quantidade' => $item['quantidade'] ?? 0,
+                        'preco'      => $item['preco'] ?? 0,
+                    ];
+                }),
+                'created_at' => $pedido->created_at->toDateTimeString(),
             ];
         });
 

@@ -47,11 +47,18 @@ Route::prefix('/v1')->group(function () {
             Route::prefix('/pedidos')->group(function () {
                 Route::get('/', [PedidoController::class, 'todosPedidos']); // --
             });
+            Route::prefix('/clientes')->group(function () {
+                Route::get('/todos', [AuthController::class, 'todosClientes']); //
+            });
+            Route::prefix('/entregadores')->group(function () {
+                Route::get('/todos', [AuthController::class, 'todosEntregadores']); //
+            });
         });
 
         Route::prefix('/entregador')->group(function () {
             Route::prefix('/pedidos')->group(function () {
                 Route::get('/', [EntregadorController::class, 'pedidosEsperandoRetirada']); //
+                Route::get('/entregas', [EntregadorController::class, 'todasMinhasEntregas']); //
                 Route::post('/aceitar', [EntregadorController::class, 'aceitarEntrega']); //
                 Route::post('/finalizar', [EntregadorController::class, 'finalizarEntrega']); //
             });

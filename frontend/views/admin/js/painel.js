@@ -253,7 +253,7 @@ async function carregarProdutos() {
           <strong>${p.nome}</strong>
           <img src="${p.imagem}" alt="${p.nome}">
           <div class="btns">
-            <button class="add">+</button>
+            <button style="margin-top: 0.7rem;" class="add">+</button>
           </div>
         `;
 

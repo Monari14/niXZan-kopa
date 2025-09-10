@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Produtos</title>
+  <title>Meus pedidos</title>
   <link rel="stylesheet" href="../../../css/style.css">
   <style>
     /* TABELA DE PEDIDOS */
-    #todos_pedidos {
+    #meus_pedidos {
         background: var(--bg-card);
         border-radius: var(--radius);
         box-shadow: var(--shadow);
@@ -15,7 +15,7 @@
         overflow: hidden;
         margin-bottom: 2rem;
     }
-    #todos_pedidos th {
+    #meus_pedidos th {
         background: var(--bg-header);
         color: var(--accent);
         font-weight: 700;
@@ -23,25 +23,25 @@
         font-size: 1rem;
         border-bottom: 2px solid var(--accent);
     }
-    #todos_pedidos td {
+    #meus_pedidos td {
         padding: 0.7rem 0.5rem;
         color: var(--text-main);
         border-bottom: 1px solid #222;
         font-size: 1rem;
         vertical-align: top;
     }
-    #todos_pedidos tr:nth-child(even) td {
+    #meus_pedidos tr:nth-child(even) td {
         background: var(--bg-hover);
     }
-    #todos_pedidos tr:last-child td {
+    #meus_pedidos tr:last-child td {
         border-bottom: none;
     }
-    #todos_pedidos tbody tr:hover td {
+    #meus_pedidos tbody tr:hover td {
         background: var(--bg-header);
         color: var(--accent);
         transition: background var(--transition), color var(--transition);
     }
-    #todos_pedidos {
+    #meus_pedidos {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
@@ -54,7 +54,7 @@
     }
 
     @media (max-width: 900px) {
-        #todos_pedidos {
+        #meus_pedidos {
             font-size: 0.95rem;
             min-width: 600px;
         }
@@ -66,7 +66,7 @@
             margin-left: -8px;
             margin-right: -8px;
         }
-        #todos_pedidos {
+        #meus_pedidos {
             min-width: 480px;
             font-size: 0.88rem;
         }

@@ -18,6 +18,7 @@ class AuthController extends Controller
             'email'    => 'nullable|string|email|unique:users,email',
             'telefone' => 'nullable|string|unique:users,telefone',
             'password' => 'required|string|min:6|confirmed',
+            'role'     => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -32,20 +33,32 @@ class AuthController extends Controller
             'username' => $request->username,
             'email'    => $request->email,
             'telefone' => $request->telefone,
+            'role'     => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if($user->role == "cliente"){
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'user'  => [
-                'id'       => $user->id,
-                'name'     => $user->name,
-                'username' => $user->username,
-                'role'     => $user->role,
-            ],
-            'token' => $token,
-        ], 201);
+            return response()->json([
+                'user'  => [
+                    'id'       => $user->id,
+                    'name'     => $user->name,
+                    'username' => $user->username,
+                    'role'     => $user->role,
+                ],
+                'token' => $token,
+            ], 201);
+        }else{
+            return response()->json([
+                'user'  => [
+                    'id'       => $user->id,
+                    'name'     => $user->name,
+                    'username' => $user->username,
+                    'role'     => $user->role,
+                ]
+            ], 201);
+        }
     }
     public function login(Request $request)
     {
@@ -168,5 +181,67 @@ class AuthController extends Controller
                 'role'     => $user->role,
             ],
         ], 200);
+    }
+    public function todosClientes()
+    {
+        $user = Auth::user();
+
+        if ($user->role == "admin") {
+            $users = User::where('role', 'cliente')
+                ->latest()
+                ->get();
+
+            return response()->json([
+                'users' => [
+                    'data' => $users->map(function ($user) {
+                        return [
+                            'id'         => $user->id,
+                            'nome'       => $user->name,
+                            'username'   => $user->username,
+                            'email'      => $user->email,
+                            'telefone'   => $user->telefone,
+                            'role'       => $user->role,
+                            'created_at' => $user->created_at->format('d/m/Y H:i'),
+                        ];
+                    }),
+                    'total' => $users->count(),
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Acesso negado.'
+        ], 401);
+    }
+    public function todosEntregadores()
+    {
+        $user = Auth::user();
+
+        if ($user->role == "admin") {
+            $users = User::where('role', 'entregador')
+                ->latest()
+                ->get();
+
+            return response()->json([
+                'users' => [
+                    'data' => $users->map(function ($user) {
+                        return [
+                            'id'         => $user->id,
+                            'nome'       => $user->name,
+                            'username'   => $user->username,
+                            'email'      => $user->email,
+                            'telefone'   => $user->telefone,
+                            'role'       => $user->role,
+                            'created_at' => $user->created_at->format('d/m/Y H:i'),
+                        ];
+                    }),
+                    'total' => $users->count(),
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Acesso negado.'
+        ], 401);
     }
 }

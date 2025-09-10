@@ -1,11 +1,10 @@
-<h2>Pedidos</h2>
+<h2>Meus pedidos</h2>
 <br>
 <div class="tabela-responsive">
-	<table id="todos_pedidos" border="1" style="width:100%; border-collapse:collapse;">
+	<table id="meus_pedidos" border="1" style="width:100%; border-collapse:collapse;">
 		<thead>
 			<tr>
-				<th style="display:none;">ID</th>
-                <th>Cliente</th>
+				<th>Pedido n°</th>
 				<th>Endereço</th>
 				<th>Pagamento</th>
 				<th>Troco</th>
@@ -16,7 +15,6 @@
 			</tr>
 		</thead>
 		<tbody>
-			<!-- Os pedidos serão inseridos aqui via JS -->
 		</tbody>
 	</table>
 </div>

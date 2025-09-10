@@ -106,8 +106,8 @@
               <ul class="navbar-links">
                   <li><a href="../pedidos/index.php">Pedidos</a></li>
                   <li><a href="index.php">Produtos</a></li>
-                  <li><a href="/clientes.php">Clientes</a></li>
-                  <li><a href="/entregadores.php">Entregadores</a></li>
+                  <li><a href="../clientes/index.php">Clientes</a></li>
+                  <li><a href="../entregadores/index.php">Entregadores</a></li>
                   <button class="logout-btn" onclick="logout()">Sair</button>
               </ul>
           </div>
@@ -145,5 +145,6 @@
     });
   </script>
   <script src="../js/produtos.js"></script>
+  <script src="../js/painel.js"></script>
 </body>
 </html>

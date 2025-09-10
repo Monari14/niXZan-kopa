@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Produtos</title>
+  <title>kopa</title>
   <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
   <header>
       <nav class="navbar">
           <div class="navbar-logo">
-          <a href="#">
+          <a href="index.php">
               <img src="../../i/logo.png" alt="Logo"> kopa
           </a>
           </div>
@@ -18,8 +18,8 @@
               <ul class="navbar-links">
                   <li><a href="pedidos/index.php">Pedidos</a></li>
                   <li><a href="produtos/index.php">Produtos</a></li>
-                  <li><a href="/clientes.php">Clientes</a></li>
-                  <li><a href="/entregadores.php">Entregadores</a></li>
+                  <li><a href="clientes/index.php">Clientes</a></li>
+                  <li><a href="entregadores/index.php">Entregadores</a></li>
                   <button class="logout-btn" onclick="logout()">Sair</button>
               </ul>
           </div>

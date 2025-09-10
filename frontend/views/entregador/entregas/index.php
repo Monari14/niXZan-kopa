@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Pedidos</title>
+  <title>Minhas entregas</title>
   <link rel="stylesheet" href="../../../css/style.css">
   <style>
     /* TABELA DE PEDIDOS */
@@ -75,40 +75,37 @@
 </head>
 <body>
   <header>
-      <nav class="navbar">
-          <div class="navbar-logo">
-          <a href="../index.php">
-              <img src="../../../i/logo.png" alt="Logo"> kopa
-          </a>
-          </div>
-          <div class="navbar-actions">
-              <ul class="navbar-links">
-                  <li><a href="index.php">Pedidos</a></li>
-                  <li><a href="../produtos/index.php">Produtos</a></li>
-                  <li><a href="../clientes/index.php">Clientes</a></li>
-                  <li><a href="../entregadores/index.php">Entregadores</a></li>
-                  <button class="logout-btn" onclick="logout()">Sair</button>
-              </ul>
-          </div>
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <a href="../index.php">
+          <img src="../../../i/logo.png" alt="Logo"> kopa
+        </a>
+      </div>
+      <div class="navbar-actions">
+        <ul class="navbar-links">
+          <li><a href="../index.php">Todas entregas</a></li>
+          <li><a href="index.php">Minhas entregas</a></li>
+          <li><a href="../pedido/index.php">Fazer um pedido</a></li>
+          <button class="logout-btn" onclick="logout()">Sair</button>
+        </ul>
+      </div>
 
-          <div class="menu-toggle" id="menuToggle">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-      </nav>
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
   </header>
-
   <main>
     <div class="container">
       <div class="meio">
-        <?php include 'todos_pedidos.php';?>
+        <h2>Minhas entregas</h2>
+        <?php include 'entregas.php';?>
       </div>
     </div>
   </main>
-
   <?php include '../footer.php';?>
-
   <script>
     const menuToggle = document.getElementById("menuToggle");
     const navbarLinks = document.querySelector(".navbar-links");
@@ -117,7 +114,7 @@
       navbarLinks.classList.toggle("active");
     });
   </script>
-  <script src="../js/pedidos.js"></script>
+  <script src="../js/minhas_entregas.js"></script>
   <script src="../js/painel.js"></script>
 </body>
 </html>
