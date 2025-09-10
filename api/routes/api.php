@@ -29,7 +29,6 @@ Route::prefix('/v1')->group(function () {
                 Route::post('/novo', [PedidoController::class, 'novoPedido']); // --
                 Route::post('/confirmar', [PedidoController::class, 'confirmar']); // --
                 Route::get('/carrinho', [PedidoController::class, 'getarCarrinho']); // --
-                Route::post('/carrinho', [PedidoController::class, 'salvarCarrinho']); //
                 Route::post('/cancelar', [PedidoController::class, 'cancelar']); //
                 Route::post('/refazer', [PedidoController::class, 'refazer']); //
                 Route::post('/{id}', [PedidoController::class, 'tempoExpiradoParaCancelar']); //
@@ -48,19 +47,19 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/', [PedidoController::class, 'todosPedidos']); // --
             });
             Route::prefix('/clientes')->group(function () {
-                Route::get('/todos', [AuthController::class, 'todosClientes']); //
+                Route::get('/todos', [AuthController::class, 'todosClientes']); // --
             });
             Route::prefix('/entregadores')->group(function () {
-                Route::get('/todos', [AuthController::class, 'todosEntregadores']); //
+                Route::get('/todos', [AuthController::class, 'todosEntregadores']); // --
             });
         });
 
         Route::prefix('/entregador')->group(function () {
             Route::prefix('/pedidos')->group(function () {
-                Route::get('/', [EntregadorController::class, 'pedidosEsperandoRetirada']); //
-                Route::get('/entregas', [EntregadorController::class, 'todasMinhasEntregas']); //
-                Route::post('/aceitar', [EntregadorController::class, 'aceitarEntrega']); //
-                Route::post('/finalizar', [EntregadorController::class, 'finalizarEntrega']); //
+                Route::get('/', [EntregadorController::class, 'pedidosEsperandoRetirada']); // --
+                Route::get('/entregas', [EntregadorController::class, 'todasMinhasEntregas']); // --
+                Route::post('/aceitar', [EntregadorController::class, 'aceitarEntrega']); // --
+                Route::post('/finalizar', [EntregadorController::class, 'finalizarEntrega']); // --
             });
         });
     });
