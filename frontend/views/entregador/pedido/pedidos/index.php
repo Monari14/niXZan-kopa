@@ -77,7 +77,7 @@
   <header>
       <nav class="navbar">
           <div class="navbar-logo">
-          <a href="../index.php">
+          <a href="../../index.php">
               <img src="../../../../i/logo.png" alt="Logo"> kopa
           </a>
           </div>
