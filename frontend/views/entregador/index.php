@@ -86,7 +86,7 @@
           <li><a href="index.php">Todas entregas</a></li>
           <li><a href="entregas/index.php">Minhas entregas</a></li>
           <li><a href="pedido/index.php">Fazer um pedido</a></li>
-          <button class="logout-btn" onclick="logout()">Sair</button>
+          <button class="logout-btn" onclick="logout2()">Sair</button>
         </ul>
       </div>
 
@@ -107,6 +107,13 @@
   </main>
   <?php include 'footer.php';?>
   <script>
+    function logout2() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user_id');
+      localStorage.removeItem('user_name');
+      localStorage.removeItem('role');
+      window.location.href = '../../index.php';
+    }
     const menuToggle = document.getElementById("menuToggle");
     const navbarLinks = document.querySelector(".navbar-links");
 
@@ -115,6 +122,5 @@
     });
   </script>
   <script src="js/entregas.js"></script>
-  <script src="js/painel.js"></script>
 </body>
 </html>
