@@ -39,6 +39,8 @@
         </div>
     </main>
     <?php include '../footer.php';?>
+    <script>
+    </script>
     <script src="../js/resumo.js"></script>
 </body>
 </html>

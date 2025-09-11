@@ -40,11 +40,12 @@ async function register() {
     const telefone = document.getElementById('telefone').value;
     const password = document.getElementById('reg-password').value;
     const password_confirmation = document.getElementById('password_confirmation').value;
+    const role = document.getElementById('role').value;
 
     const res = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, username, email, telefone, password, password_confirmation })
+        body: JSON.stringify({ name, username, email, telefone, password, password_confirmation, role})
     });
     const data = await res.json();
 

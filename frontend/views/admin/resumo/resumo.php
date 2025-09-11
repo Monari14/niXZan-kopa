@@ -52,5 +52,6 @@
         });
     </script>
     <script src="../js/resumo.js"></script>
+    <script src="../../js/token.js"></script>
 </body>
 </html>

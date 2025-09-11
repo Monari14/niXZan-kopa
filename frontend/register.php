@@ -50,6 +50,7 @@
         <label for="password_confirmation">Confirme sua senha:</label>
         <input type="password" id="password_confirmation" placeholder="Confirme sua senha">
 
+        <input type="hidden" id="role" value="cliente">
         <button type="submit">Registrar</button>
         <ul class="navbar-links">
           <li><p>Já tem uma conta? <a href="index.php" style="color: #bb86fc;">Faça login</a></p></li>

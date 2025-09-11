@@ -27,15 +27,15 @@ async function resumoPedido() {
     const produtos = dados.carrinho?.itens || [];
     if (produtos.length > 0) {
       produtos.forEach(p => {
+        console.log(JSON.stringify(p, null, 2)); // 2 espaços de indentação
         const item = document.createElement("li");
-        item.innerHTML = `
-          <center>
-            <img src="${p.imagem}" alt="${p.nome}" width="60"><br>
-            ${p.nome} - ${p.quantidade}x
-          </center>
-        `;
-        lista.appendChild(item);
-      });
+          item.style = `list-style:none; text-align:center; margin-bottom:10px;`;
+          item.innerHTML = `
+            <img src="${p.imagem}" alt="${p.nome}" style="display:block; margin:0 auto 5px;">
+            <div style="font-weight:bold;">${p.nome} - ${p.quantidade}x</div>
+          `;
+          lista.appendChild(item);
+        });
 
       // Mostrar total fora da UL
       const total = document.getElementById("total");
