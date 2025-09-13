@@ -32,6 +32,7 @@ class EntregadorController extends Controller
                 'cliente'    => $pedido->user->name ?? 'Cliente não encontrado',
                 'endereco'   => $pedido->endereco,
                 'total'      => $pedido->total,
+                'troco'      => $pedido->troco,
                 'status'     => $pedido->status,
                 'itens'      => collect(json_decode($pedido->itens_pedido, true))->map(function($item){
                     return [
@@ -76,11 +77,7 @@ class EntregadorController extends Controller
         $pedido->id_entregador = $user->id;
         $pedido->save();
 
-        $pedido->usuario->notify(new PedidoSaiuParaEntrega(
-            $user->name,
-            $pedido->usuario->name,
-            $pedido->id
-        ));
+        //$pedido->user->notify(new PedidoSaiuParaEntrega($user->name,$pedido->user->name,$pedido->id));
 
         return response()->json([
             'message' => "Pedido #{$pedido->id} aceito para entrega com sucesso.",
@@ -113,11 +110,7 @@ class EntregadorController extends Controller
         $pedido->status = 'entregue';
         $pedido->save();
 
-        $pedido->usuario->notify(new PedidoEntregue(
-            $user->name,
-            $pedido->usuario->name,
-            $pedido->id
-        ));
+        //$pedido->user->notify(new PedidoEntregue($user->name,$pedido->user->name,$pedido->id));
 
         return response()->json([
             'message' => "Pedido #{$pedido->id} entregue!",
@@ -144,6 +137,7 @@ class EntregadorController extends Controller
                 'cliente'    => $pedido->user->name ?? 'Cliente não encontrado',
                 'endereco'   => $pedido->endereco,
                 'total'      => $pedido->total,
+                'troco'      => $pedido->troco,
                 'status'     => $pedido->status,
                 'itens'      => collect(json_decode($pedido->itens_pedido, true))->map(function($item){
                     return [

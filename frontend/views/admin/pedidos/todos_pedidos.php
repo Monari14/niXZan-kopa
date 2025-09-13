@@ -10,9 +10,9 @@
 				<th>Pagamento</th>
 				<th>Troco</th>
 				<th>Total</th>
-				<th>Status</th>
 				<th>Itens</th>
                 <th>Data</th>
+				<th>Status</th>
 			</tr>
 		</thead>
 		<tbody>

@@ -10,7 +10,6 @@
 				<th>E-mail</th>
 				<th>Telefone</th>
 				<th>Tipo</th>
-				<th>Cadastrado em</th>
 			</tr>
 		</thead>
 		<tbody>

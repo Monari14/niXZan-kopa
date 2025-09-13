@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\EntregadorController;
+use App\Http\Controllers\AdminController;
 
 Route::prefix('/v1')->group(function () {
 
@@ -47,10 +48,20 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/', [PedidoController::class, 'todosPedidos']); // --
             });
             Route::prefix('/clientes')->group(function () {
-                Route::get('/todos', [AuthController::class, 'todosClientes']); // --
+                Route::get('/todos', [AdminController::class, 'todosClientes']); // --
             });
             Route::prefix('/entregadores')->group(function () {
-                Route::get('/todos', [AuthController::class, 'todosEntregadores']); // --
+                Route::get('/todos', [AdminController::class, 'todosEntregadores']); // --
+            });
+            Route::prefix('/admins')->group(function () {
+                Route::patch('/atualizar/role/{id_user}', [AdminController::class, 'atualizarRole']); // --
+                Route::patch('/atualizar/status/pedido/{id_pedido}', [AdminController::class, 'atualizarStatusPedido']); // --
+                Route::delete('/deletar/{id_user}', [AdminController::class, 'deleteUser']); // --
+                Route::get('/todos', [AdminController::class, 'todosAdmins']); // --
+            });
+            Route::prefix('settings')->group(function () {
+                Route::get('/', [AdminController::class, 'settings']); //
+                Route::post('/', [AdminController::class, 'updateSettings']); //
             });
         });
 

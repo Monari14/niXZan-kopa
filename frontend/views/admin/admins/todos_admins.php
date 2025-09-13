@@ -1,4 +1,4 @@
-<h2>Entregadores</h2>
+<h2>Administradores</h2>
 <br>
 <div class="tabela-responsive">
 	<table id="todos_entregadores" border="1" style="width:100%; border-collapse:collapse;">

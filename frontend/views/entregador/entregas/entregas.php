@@ -7,6 +7,7 @@
         <th>Cliente</th>
         <th>Endereço</th>
         <th>Total</th>
+        <th>Troco</th>
         <th>Status</th>
         <th>Data</th>
         <th>Ações</th>

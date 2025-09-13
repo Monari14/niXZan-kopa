@@ -20,6 +20,7 @@
                   <li><a href="produtos/index.php">Produtos</a></li>
                   <li><a href="clientes/index.php">Clientes</a></li>
                   <li><a href="entregadores/index.php">Entregadores</a></li>
+                  <li><a href="admins/index.php">Adm</a></li>
                   <button class="logout-btn" onclick="logout()">Sair</button>
               </ul>
           </div>

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('troco', 8, 2)->nullable();
             $table->decimal('total', 8, 2)->default(0);
             $table->json('itens_pedido');
-            $table->string('status')->default('pendente');
+            $table->string('status')->default('preparando');
             $table->foreign('id_user')->references('id')->on('users');
             $table->foreign('id_entregador')->references('id')->on('users');
             $table->timestamps();

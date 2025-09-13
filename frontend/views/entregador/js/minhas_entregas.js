@@ -48,6 +48,7 @@ async function carregarMinhasEntregas() {
         <td>${pedido.cliente || '-'}</td>
         <td>${pedido.endereco || '-'}</td>
         <td>R$ ${Number(pedido.total || 0).toFixed(2)}</td>
+        <td>R$ ${Number(pedido.troco || 0).toFixed(2)}</td>
         <td>${status}</td>
         <td>${pedido.created_at ? new Date(pedido.created_at).toLocaleString() : '-'}</td>
         <td>
@@ -80,7 +81,7 @@ async function finalizarPedido(id_pedido) {
     if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
     const data = await res.json();
     alert(data.message);
-    carregarPedidos();
+    carregarMinhasEntregas();
   } catch (erro) {
     console.error('Erro ao finalizar pedido:', erro);
   }

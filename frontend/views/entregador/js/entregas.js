@@ -33,16 +33,14 @@ async function carregarPedidos() {
     tabela.innerHTML = '';
 
     if (pedidos.length === 0) {
-      tabela.innerHTML = `<tr><td colspan="8">Nenhum pedido encontrado</td></tr>`;
+      tabela.innerHTML = `<tr><td colspan="7">Nenhum pedido encontrado</td></tr>`;
       return;
     }
 
     pedidos.forEach(pedido => {
       const tr = document.createElement('tr');
 
-      // Map status
       const statusMap = {
-        "pendente": "Pendente",
         "preparando": "Preparando",
         "esperando_retirada": "Esperando retirada",
         "saiu_para_entrega": "Saiu para entrega",
@@ -56,23 +54,33 @@ async function carregarPedidos() {
         <td>${pedido.cliente || '-'}</td>
         <td>${pedido.endereco || '-'}</td>
         <td>R$ ${Number(pedido.total || 0).toFixed(2)}</td>
+        <td>R$ ${Number(pedido.troco || 0).toFixed(2)}</td>
         <td>${status}</td>
         <td>${pedido.created_at ? new Date(pedido.created_at).toLocaleString() : '-'}</td>
+        <td>
+          <button class="aceitar-btn">Aceitar</button>
+        </td>
       `;
       tabela.appendChild(tr);
 
-      // Eventos de botão
       const aceitarBtn = tr.querySelector('.aceitar-btn');
-      if (aceitarBtn) aceitarBtn.addEventListener('click', () => aceitarPedido(pedido.id_pedido));
+      if (aceitarBtn) {
+        aceitarBtn.addEventListener('click', async () => {
+          aceitarBtn.disabled = true;
+          await aceitarPedido(pedido.id_pedido);
+          aceitarBtn.disabled = false;
+        });
+      }
     });
 
   } catch (erro) {
     console.error('Erro ao carregar pedidos:', erro);
+    alert('Não foi possível carregar os pedidos. Verifique o console.');
   }
 }
 
-async function aceitarPedido(id_pedido) {
-  console.log('Aceitando pedido:', id_pedido);
+async function aceitarPedido(id) {
+  console.log('Aceitando pedido:', id);
   try {
     const res = await fetch(`${API_URL}/entregador/pedidos/aceitar`, {
       method: 'POST',
@@ -80,10 +88,16 @@ async function aceitarPedido(id_pedido) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ id_pedido })
+      body: JSON.stringify({ id_pedido: id })
     });
 
-    if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const msg = errData.error || `Erro ${res.status}: ${res.statusText}`;
+      alert(msg);
+      throw new Error(msg);
+    }
+
     const data = await res.json();
     alert(data.message);
     carregarPedidos();

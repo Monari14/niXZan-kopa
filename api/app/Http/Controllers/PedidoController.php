@@ -21,7 +21,7 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if (!in_array($user->role, ['cliente', 'admin'])) {
+        if (!in_array($user->role, ['cliente', 'admin', 'entregador'])) {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
@@ -118,7 +118,7 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if ($user->role !== 'cliente' && $user->role !== 'admin') {
+        if ($user->role !== 'cliente' && $user->role !== 'admin' && $user->role !== 'entregador') {
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
@@ -183,7 +183,7 @@ class PedidoController extends Controller
                 $carrinho->delete();
 
                 // Notificação
-                $pedido->user->notify(new PedidoFeito($request->user(), $pedido->id));
+                //$pedido->user->notify(new PedidoFeito($request->user(), $pedido->id));
 
                 return response()->json([
                     'message' => 'pedido_realizado',
@@ -206,7 +206,7 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role !== 'cliente' && $user->role !== 'admin'){
+        if($user->role !== 'cliente' && $user->role !== 'admin' && $user->role !== 'entregador'){
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
         $perPage = intval($request->input('per_page', 10));
@@ -255,7 +255,7 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role !== 'cliente' && $user->role !== 'admin'){
+        if($user->role !== 'cliente' && $user->role !== 'admin' && $user->role !== 'entregador'){
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
@@ -295,7 +295,7 @@ class PedidoController extends Controller
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 
-        if($user->role !== 'cliente' && $user->role !== 'admin'){
+        if($user->role !== 'cliente' && $user->role !== 'admin' && $user->role !== 'entregador'){
             return response()->json(['error' => 'Acesso não autorizado!'], 401);
         }
 

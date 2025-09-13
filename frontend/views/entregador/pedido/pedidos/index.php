@@ -123,6 +123,6 @@
       navbarLinks.classList.toggle("active");
     });
   </script>
-  <script src="../js/pedidos.js"></script>
+  <script src="../../js/pedidos.js"></script>
 </body>
 </html>

@@ -22,7 +22,7 @@ class PedidoSaiuParaEntrega extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['notifications'];
     }
 
     public function toDatabase($notifiable)
