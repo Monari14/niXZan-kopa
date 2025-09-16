@@ -32,6 +32,7 @@
   <br>
   <h2 style="text-align:center;">Login</h2>
   <form id="login">
+    <div id="login-error" style="color: #cf6679; margin-top: 10px;"></div>
       <label for="email_username">E-mail ou username:</label>
       <input type="text" id="email_username" placeholder="Seu e-mail ou username">
 
@@ -43,6 +44,8 @@
         <li><p>Não tem uma conta? <a href="register.php" style="color: #bb86fc;">Registre-se</a></p></li>
       </ul>
   </form>
+
+  <?php include 'footer.php';?>
   <script src="js/theme.js"></script>
   <script src="js/auth/auth.js"></script>
   <script>

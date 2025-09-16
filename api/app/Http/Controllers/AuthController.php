@@ -23,6 +23,7 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
+                'status'  => false,
                 'message' => 'Erro de validação.',
                 'errors'  => $validator->errors(),
             ], 422);
@@ -69,9 +70,9 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
+                'status'  => false,
+                'message' => 'Erro de validação.',
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
@@ -82,7 +83,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Email/Username or Password does not match.',
+                'message' => 'E-mail/Usuário ou senha incorretos.',
             ], 401);
         }
 

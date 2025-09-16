@@ -13,7 +13,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Primeiro usuário será admin
         User::create([
             'name' => 'Administrador',
             'email' => 'admin@admin.com',
@@ -23,13 +22,13 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin123'),
         ]);
 
-        User::create([
-            'name' => 'Felipe Eduardo Monari',
-            'email' => 'felipeemonari@gmail.com',
-            'username' => 'monari',
-            'telefone' => '54996472916',
-            'role' => 'cliente',
-            'password' => Hash::make('felipe'),
-        ]);
+        //User::create([
+        //    'name' => 'Felipe Eduardo Monari',
+        //    'email' => 'felipeemonari@gmail.com',
+        //    'username' => 'monari',
+        //    'telefone' => '54996472916',
+        //    'role' => 'cliente',
+        //    'password' => Hash::make('felipe'),
+        //]);
     }
 }

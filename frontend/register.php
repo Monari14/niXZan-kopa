@@ -32,6 +32,7 @@
     <br>
     <h2 style="text-align:center;">Registrar</h2>
     <form id="register">
+      <div id="register-error" style="color: #cf6679; margin-top: 10px;"></div>
         <label for="name">Nome completo:</label>
         <input type="text" id="name" placeholder="Seu nome completo">
 
@@ -56,6 +57,8 @@
           <li><p>Já tem uma conta? <a href="index.php" style="color: #bb86fc;">Faça login</a></p></li>
         </ul>
     </form>
+    
+  <?php include 'footer.php';?>
   <script src="js/theme.js"></script>
   <script src="js/auth/auth.js"></script>
   <script>
